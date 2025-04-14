@@ -21,21 +21,59 @@ class PlaneStates(Enum):
 
 # Objet regroupant les fonctionnalites d un avion
 class Plane:
-    def __init__(self):
+    def __init__(self, id, stateLock):
         self.state = PlaneStates.InHangar
+        self.id = id
+        self.stateLock = stateLock
+    def decolage(self, side, front, runway):
+        with self.stateLock:
+            self.state = PlaneStates.WaitingToLaunch
+        print(f"\nAvion{self.id} en attente de décollage")
 
-    def decolage(self):
-        print("\nDécollage en cours...")
-        self.state = PlaneStates.Launching
-        for i in progressbar(range(10), redirect_stdout=True):
-            time.sleep(1)
-        self.state = PlaneStates.InAir
-        print("L'avion a décollé avec succès!\n")
+        piste = None
 
-    def atterissage(self):
-        print("\nAtterrissage en cours...")
-        self.state = PlaneStates.Landing
-        for i in progressbar(range(20), redirect_stdout=True):
-            time.sleep(1)
-        self.state = PlaneStates.InHangar
-        print("L'avion a atterri avec succès!\n")
+        # Boucle jusqu'à obtenir une piste
+        while True:
+            if front.acquire(blocking=False):
+                piste = 'front'
+                break
+            elif not runway.locked():
+                if side.acquire(blocking=False):
+                    piste = 'side'
+                    break
+            else:
+                time.sleep(0.5)  # Attente avant de réessayer
+
+        try:
+            print(f"\nAvion{self.id} décollage en cours")
+            with self.stateLock:
+                self.state = PlaneStates.Launching
+            for i in progressbar(range(10), redirect_stdout=True):
+                time.sleep(1)
+            with self.stateLock:
+                self.state = PlaneStates.InAir
+            print(f"L'avion{self.id} a décollé avec succès!\n")
+        finally:
+            if piste == 'front':
+                front.release()
+            else:
+                side.release()
+
+    def atterissage(self, side, runway):
+        with self.stateLock:
+            self.state = PlaneStates.WaitingToLand
+        print(f"\nAvion{self.id} en attente d'aterissage")
+        with runway:
+            side.acquire()
+            side.acquire()
+            self.stateLock.acquire()
+            self.state = PlaneStates.Landing
+            self.stateLock.release()
+            for i in progressbar(range(20), redirect_stdout=True):
+                time.sleep(1)
+            self.stateLock.acquire()
+            self.state = PlaneStates.InHangar
+            self.stateLock.release()
+            print(f"L'avion{self.id} a atterri avec succès!\n")
+            side.release()
+            side.release()

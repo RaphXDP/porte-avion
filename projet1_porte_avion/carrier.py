@@ -7,9 +7,14 @@ Description : Simulation d'un porte-avion commandé par des touches de clavier.
 import time
 import threading
 import multiprocessing
-from ctypes import c_bool
 import queue
 from plane import Plane, PlaneStates
+
+side = threading.Semaphore(2)
+front = threading.Semaphore(2)
+runway = threading.Lock()
+avions = []
+stateLock = threading.Lock()
 
 def tableau_de_bord(file_entree, drapeau_arret):
     """
@@ -39,19 +44,50 @@ def processus_pont(file_messages, drapeau_arret):
                 drapeau_arret.set()
                 break
             elif message == "l":
-                print("Lancer un avion")
+                avion_lance = False
+                for avion in avions:
+                    with stateLock:
+                        if avion.state == PlaneStates.InHangar:
+                            threading.Thread(target=avion.decolage, args=(side, front, runway)).start()
+                            avion_lance = True
+                            break
+                if not avion_lance:
+                    avions.append(Plane(len(avions)+1, stateLock))
+                    threading.Thread(target=avions[len(avions)-1].decolage, args=(side, front, runway)).start()
             elif message == "r":
-                print("Rapatrier tous les avions")
+                with stateLock:
+                    for avion in avions:
+                        if avion.state == PlaneStates.InAir:
+                            threading.Thread(target=avion.atterissage, args=(side, runway)).start()
             elif message == "s":
-                print("Affichage des états des avions")
+                for avion in avions:
+                    print(f"Avion {avion.id} : {avion.state.name}")
             elif message == "1":
-                print("Fermer les catapultes avant pour maintenance")
+                print("Fermeture des catapultes avant")
+                front.acquire()
+                front.acquire()
+                print("Catapultes avant fermées")
             elif message == "2":
                 print("Ouvrir les catapultes avant")
+                try:
+                    front.release()
+                    front.release()
+                    print("Catapultes avant ouvertes")
+                except ValueError:
+                    print("Les catapultes avant sont déjà ouvertes")
             elif message == "3":
                 print("Fermer les catapultes latérales pour maintenance")
+                side.acquire()
+                side.acquire()
+                print("Catapultes latérales fermées")
             elif message == "4":
                 print("Ouvrir les catapultes latérales")
+                try:
+                    side.release()
+                    side.release()
+                    print("Catapultes latérales ouvertes")
+                except ValueError:
+                    print("Les catapultes latérales sont déjà ouvertes")
             elif message == "v":
                 print("Affichage de l'état des catapultes")
             elif message == "q":
@@ -92,12 +128,9 @@ def main():
     processus.join()
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     main()
-=======
     avion = Plane()
     avion.decolage()
     time.sleep(2)
     avion.atterissage()
     pass
->>>>>>> 71209950eb4fc5e17ca7b51a063eea48bd735086
