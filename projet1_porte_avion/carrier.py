@@ -92,4 +92,12 @@ def main():
     processus.join()
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     main()
+=======
+    avion = Plane()
+    avion.decolage()
+    time.sleep(2)
+    avion.atterissage()
+    pass
+>>>>>>> 71209950eb4fc5e17ca7b51a063eea48bd735086
