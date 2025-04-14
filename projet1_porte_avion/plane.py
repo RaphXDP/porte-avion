@@ -1,6 +1,6 @@
 """
-Author: Samuel Faucher
-Date: 15 avril 2024
+Author: Raphael Gravel, Jean-Christophe Chouinard
+Date: 15 avril 2025
 Description: Simulation des differentes phases d une avion sur un porte-avion
 """
 
@@ -22,9 +22,20 @@ class PlaneStates(Enum):
 # Objet regroupant les fonctionnalites d un avion
 class Plane:
     def __init__(self):
-        pass
+        self.state = PlaneStates.InHangar
 
-    def fonction(self):
-        pass
+    def decolage(self):
+        print("\nDécollage en cours...")
+        self.state = PlaneStates.Launching
+        for i in progressbar(range(10), redirect_stdout=True):
+            time.sleep(1)
+        self.state = PlaneStates.InAir
+        print("L'avion a décollé avec succès!\n")
 
-
+    def atterissage(self):
+        print("\nAtterrissage en cours...")
+        self.state = PlaneStates.Landing
+        for i in progressbar(range(20), redirect_stdout=True):
+            time.sleep(1)
+        self.state = PlaneStates.InHangar
+        print("L'avion a atterri avec succès!\n")

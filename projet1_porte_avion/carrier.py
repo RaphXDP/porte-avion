@@ -24,4 +24,8 @@ def dashboard(carrier_active, inputQueue):
 
 
 if __name__ == "__main__":
+    avion = Plane()
+    avion.decolage()
+    time.sleep(2)
+    avion.atterissage()
     pass
