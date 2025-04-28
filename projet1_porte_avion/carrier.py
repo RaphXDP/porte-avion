@@ -63,34 +63,51 @@ def processus_pont(file_messages, drapeau_arret):
                 for avion in avions:
                     print(f"Avion {avion.id} : {avion.state.name}")
             elif message == "1":
-                print("Fermeture des catapultes avant")
-                front.acquire()
-                front.acquire()
-                print("Catapultes avant fermées")
+                if(front._value >0):
+                    front.acquire()
+                    print("Une Catapultes avant Fermé")
+                else:
+                    print("Les catapultes avant sont déjà tous fermées")
             elif message == "2":
                 print("Ouvrir les catapultes avant")
-                try:
+                if(front._value <2):
                     front.release()
-                    front.release()
-                    print("Catapultes avant ouvertes")
-                except ValueError:
+                    print("Une Catapultes avant ouvertes")
+                else:
                     print("Les catapultes avant sont déjà ouvertes")
             elif message == "3":
-                print("Fermer les catapultes latérales pour maintenance")
-                side.acquire()
-                side.acquire()
-                print("Catapultes latérales fermées")
+                print("Fermer les catapultes Latérales")
+                if(side._value >0):
+                    side.acquire()
+                    print("Une Catapulte latérales fermées")
+                else:
+                    print("Les catapultes latérales sont déjà fermées")
             elif message == "4":
                 print("Ouvrir les catapultes latérales")
-                try:
+                if(side._value <2):
                     side.release()
-                    side.release()
-                    print("Catapultes latérales ouvertes")
-                except ValueError:
+                    print("Une Catapulte latérales ouvertes")
+                else:
                     print("Les catapultes latérales sont déjà ouvertes")
             elif message == "v":
                 print("Affichage de l'état des catapultes")
+                print(f"Catapultes de coté disponibles:{side._value}")
+                print(f"Catapultes d'avant disponible:{front._value}")
+                
             elif message == "q":
+                with stateLock:
+                    for avion in avions:
+                        if avion.state == PlaneStates.InAir:
+                            threading.Thread(target=avion.atterissage, args=(side, runway)).start()
+                flag =True
+                while(flag):
+                    flag = False
+                    with stateLock:
+                        for avion in avions:
+                            if not avion.state == PlaneStates.InHangar:
+                                flag =True
+                    time.sleep(0.5)
+                                
                 print("Arrêt du programme — appuyez sur Entrée pour quitter")
                 drapeau_arret.set()
                 break
@@ -109,7 +126,6 @@ v = afficher l'état des catapultes
 q + _ = accoster le porte-avions (fin du programme)
 *******************************************""")
 
-            print(message)
 
         except queue.Empty:
             continue
@@ -129,8 +145,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    avion = Plane()
-    avion.decolage()
-    time.sleep(2)
-    avion.atterissage()
     pass

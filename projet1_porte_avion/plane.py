@@ -48,7 +48,7 @@ class Plane:
             print(f"\nAvion{self.id} décollage en cours")
             with self.stateLock:
                 self.state = PlaneStates.Launching
-            for i in progressbar(range(10), redirect_stdout=True):
+            for i in progressbar(range(1), redirect_stdout=True):
                 time.sleep(1)
             with self.stateLock:
                 self.state = PlaneStates.InAir
@@ -69,7 +69,7 @@ class Plane:
             self.stateLock.acquire()
             self.state = PlaneStates.Landing
             self.stateLock.release()
-            for i in progressbar(range(20), redirect_stdout=True):
+            for i in progressbar(range(2), redirect_stdout=True):
                 time.sleep(1)
             self.stateLock.acquire()
             self.state = PlaneStates.InHangar
