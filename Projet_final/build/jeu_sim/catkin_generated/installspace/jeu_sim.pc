@@ -1,0 +1,8 @@
+prefix=/home/kanye/projects/porte-avion/Projet_final/install
+
+Name: jeu_sim
+Description: Description of jeu_sim
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

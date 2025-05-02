@@ -1,0 +1,2 @@
+jeu_sim
+-DCATKIN_DEVEL_PREFIX=/home/kanye/projects/porte-avion/Projet_final/devel -DCMAKE_INSTALL_PREFIX=/home/kanye/projects/porte-avion/Projet_final/install -G Unix Makefiles
