@@ -7,8 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/kanye/projects/porte-avion/Projet_final/devel:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/kanye/projects/porte-avion/Projet_final/devel/lib:$LD_LIBRARY_PATH"
-export PWD='/home/kanye/projects/porte-avion/Projet_final/build'
-export ROSLISP_PACKAGE_DIRECTORIES="/home/kanye/projects/porte-avion/Projet_final/devel/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/kanye/projects/porte-avion/Projet_final/src:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/vboxuser/Documents/projetv2/porte-avion/Projet_final/devel:$CMAKE_PREFIX_PATH"
+export PWD='/home/vboxuser/Documents/projetv2/porte-avion/Projet_final/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/home/vboxuser/Documents/projetv2/porte-avion/Projet_final/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/home/vboxuser/Documents/projetv2/porte-avion/Projet_final/src:$ROS_PACKAGE_PATH"

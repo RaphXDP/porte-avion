@@ -29,8 +29,8 @@ class GestionTerrain:
         self.pub_match = rospy.Publisher("match", String, queue_size=10)
 
         rospy.Subscriber("robot", String, self.traiter_demande)
-        rospy.Subscriber("/robot_0/base_pose_ground_truth", Odometry, self.maj_position_bleu)
-        rospy.Subscriber("/robot_1/base_pose_ground_truth", Odometry, self.maj_position_rouge)
+        #rospy.Subscriber("/robot_0/base_pose_ground_truth", Odometry, self.maj_position_bleu)
+        #rospy.Subscriber("/robot_1/base_pose_ground_truth", Odometry, self.maj_position_rouge)
 
         rospy.loginfo("Node gestion_terrain actif.")
 
@@ -51,13 +51,23 @@ class GestionTerrain:
 
         if action == "charger":
             rospy.loginfo(f"{equipe} demande de charger un ballon...")
-            self.positions[equipe] = self.get_position(equipe)
+            x,y = self.get_position(equipe)
+            self.positions[equipe]["x"] = x
+            self.positions[equipe]["y"] = y
             if equipe == "bleu":
                 if self.positions[equipe]["x"] < self.zones[action][equipe][0] and self.positions[equipe]["y"] < self.zones[action][equipe][1]:
                     resultat = "reussite"
+                    rospy.loginfo("chargement réussi!")
+                else:
+                    rospy.loginfo("chargement échoué!")
+                    
             if equipe == "rouge":
                 if self.positions[equipe]["x"] > self.zones[action][equipe][0] and self.positions[equipe]["y"] > self.zones[action][equipe][1]:
                     resultat = "reussite"
+                    rospy.loginfo("chargement réussi!")
+                else:
+                    rospy.loginfo("chargement échoué!")
+
             
 
         elif action == "tirer":
@@ -73,6 +83,9 @@ class GestionTerrain:
 
         elif action == "escalader":
             rospy.loginfo(f"{equipe} tente de grimper...")
+            x,y = self.get_position(equipe)
+            self.positions[equipe]["x"] = x
+            self.positions[equipe]["y"] = y
             if equipe == "bleu":
                 if self.positions[equipe]["x"] < self.zones[action][equipe][0] and self.positions[equipe]["y"] > self.zones[action][equipe][1]:
                     if random.random(1, 10) < 6:
