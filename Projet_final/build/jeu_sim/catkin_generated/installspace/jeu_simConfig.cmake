@@ -67,14 +67,14 @@ set(jeu_sim_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(jeu_sim_SOURCE_PREFIX /home/vboxuser/Documents/projetv2/porte-avion/Projet_final/src/jeu_sim)
-  set(jeu_sim_DEVEL_PREFIX /home/vboxuser/Documents/projetv2/porte-avion/Projet_final/devel)
+  set(jeu_sim_SOURCE_PREFIX /home/kanye/projects/porte-avion/Projet_final/src/jeu_sim)
+  set(jeu_sim_DEVEL_PREFIX /home/kanye/projects/porte-avion/Projet_final/devel)
   set(jeu_sim_INSTALL_PREFIX "")
   set(jeu_sim_PREFIX ${jeu_sim_DEVEL_PREFIX})
 else()
   set(jeu_sim_SOURCE_PREFIX "")
   set(jeu_sim_DEVEL_PREFIX "")
-  set(jeu_sim_INSTALL_PREFIX /home/vboxuser/Documents/projetv2/porte-avion/Projet_final/install)
+  set(jeu_sim_INSTALL_PREFIX /home/kanye/projects/porte-avion/Projet_final/install)
   set(jeu_sim_PREFIX ${jeu_sim_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/vboxuser/Documents/projetv2/porte-avion/Projet_final/install/lib;/home/vboxuser/Documents/projetv2/porte-avion/Projet_final/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/kanye/projects/porte-avion/Projet_final/install/lib;/home/kanye/projects/porte-avion/Projet_final/devel/lib;/home/kanye/catkin_ws/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

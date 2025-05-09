@@ -1,4 +1,4 @@
-prefix=/home/vboxuser/Documents/projetv2/porte-avion/Projet_final/install
+prefix=/home/kanye/projects/porte-avion/Projet_final/install
 
 Name: jeu_sim
 Description: Description of jeu_sim

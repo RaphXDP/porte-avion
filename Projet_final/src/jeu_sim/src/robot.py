@@ -25,6 +25,7 @@ class Robot:
         self.running = True
         self.bumped = False
         self.bump_escape = False
+        self.newresult = False
         self.movement_thread = threading.Thread(target=self.movement_loop)
         self.movement_thread.start()
 
@@ -42,10 +43,13 @@ class Robot:
 
     def handle_key(self, key):
         if self.climbing:
-            rospy.loginfo(f"{self.name} escalade : bloqué.")
+            if key == self.keys['climb']:
+                self.climb()
+            else:
+                rospy.loginfo(f"{self.name} escalade : bloqué.")
             return
 
-        if key in self.keys['move']:
+        elif key in self.keys['move']:
             if self.current_key == key:
                 self.current_key = None
                 self.stop()
@@ -90,11 +94,14 @@ class Robot:
 
     def load_ball(self):
         if self.ball_count >= self.max_balls:
-            rospy.loginfo(f"{self.name} a déjà 2 ballons.")
+            rospy.loginfo(f"{self.name} a déjà {self.max_balls} ballons.")
             return
+        self.newresult = False
         self.send_action('charger')
         rospy.loginfo(f"{self.name} attend un ballon...")
-        rospy.sleep(1)
+        while not self.newresult:
+           rospy.loginfo(f"{self.newresult}")
+           rospy.sleep(1)
         if self.confirmation_result == 'reussite':
             self.ball_count += 1
             rospy.loginfo(f"{self.name} a maintenant {self.ball_count} ballons.")
@@ -105,8 +112,12 @@ class Robot:
         if self.ball_count == 0:
             rospy.loginfo(f"{self.name} n'a pas de ballon à tirer.")
             return
+        self.newresult = False
         self.send_action('tirer')
+        
         rospy.loginfo(f"{self.name} tente un tir...")
+        while not self.newresult:
+            rospy.sleep(0.1)
         rospy.sleep(1)
         if self.confirmation_result == 'reussite':
             self.ball_count -= 1
@@ -115,14 +126,15 @@ class Robot:
             rospy.loginfo(f"{self.name} : tir échoué.")
 
     def climb(self):
-        if self.successful_climb:
-            rospy.loginfo(f"{self.name} a déjà grimpé. Action bloquée.")
-            return
+        
+        self.newresult = False
         self.send_action('escalader')
         rospy.loginfo(f"{self.name} tente l’escalade...")
+        while not self.newresult:
+            rospy.sleep(0.1)
         rospy.sleep(3)
         if self.confirmation_result == 'reussite':
-            self.successful_climb = True
+            self.climbing = True
             rospy.loginfo(f"{self.name} a réussi l’escalade (+5 points)")
         else:
             rospy.loginfo(f"{self.name} a échoué l’escalade.")
@@ -138,6 +150,8 @@ class Robot:
             data = json.loads(msg.data)
             if data.get("equipe") == self.team_color and data.get("action") in ["tirer", "charger", "escalader"]:
                 self.confirmation_result = data.get("resultat")
+                self.newresult = True
+                rospy.loginfo(f"{self.newresult} callback")
         except Exception as e:
             rospy.logwarn(f"{self.name} a reçu une donnée non valide : {e}")
 
