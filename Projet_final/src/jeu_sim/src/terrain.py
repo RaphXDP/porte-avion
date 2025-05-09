@@ -15,8 +15,8 @@ class GestionTerrain:
         }
 
         self.positions = {
-            "bleu": {"x": 0, "y": 0},
-            "rouge": {"x": 0, "y": 0}
+            'bleu': {"x": 0, "y": 0},
+            'rouge': {"x": 0, "y": 0}
         }
 
         self.zones = {
@@ -72,14 +72,20 @@ class GestionTerrain:
 
         elif action == "tirer":
             rospy.loginfo(f"{equipe} tente un tir...")
-            if(self.zone_tir(self.positions[equipe][0], self.positions[equipe][1], equipe)):
-                if random.random(1, 10) < 9:
+            x,y = self.get_position(equipe)
+            self.positions[equipe]["x"] = x
+            self.positions[equipe]["y"] = y
+            if(self.zone_tir(self.positions[equipe]["x"], self.positions[equipe]["y"], equipe)):
+                if random.random() < 0.9:
                     self.score[equipe]["ballons"] += 1
                     resultat = "reussite"
                     rospy.loginfo("Tir réussi!")
                 else:
                     rospy.loginfo("Tir échoué.")
-                self.publier_score()
+            else:
+                rospy.loginfo("Robot pas au bon endroit pour tirer")
+                
+            self.publier_score()
 
         elif action == "escalader":
             rospy.loginfo(f"{equipe} tente de grimper...")
@@ -88,7 +94,7 @@ class GestionTerrain:
             self.positions[equipe]["y"] = y
             if equipe == "bleu":
                 if self.positions[equipe]["x"] < self.zones[action][equipe][0] and self.positions[equipe]["y"] > self.zones[action][equipe][1]:
-                    if random.random(1, 10) < 6:
+                    if random.random() < 0.6:
                         self.score[equipe]["etages"] += 1
                         resultat = "reussite"
                         rospy.loginfo("Escalade réussie!")
@@ -117,6 +123,7 @@ class GestionTerrain:
             msg = rospy.wait_for_message(topic, Odometry, timeout=1.0)
             x = msg.pose.pose.position.x
             y = msg.pose.pose.position.y
+            rospy.loginfo(f"[DEBUG] Position {equipe} obtenue : x={x:.2f}, y={y:.2f}")
             return (x, y)
         except rospy.ROSException:
             rospy.logwarn(f"Position non disponible pour l’équipe {equipe}.")
@@ -124,11 +131,14 @@ class GestionTerrain:
     def zone_tir(self, x, y, equipe):
 
         distance = math.sqrt(x**2 + y**2)
-        rayon = math.sqrt((self.zones["rouge"][0] - self.zones["bleu"][0])**2 + (self.zones["rouge"][1] - self.zones["bleu"][1])**2)/2
+        rayon = math.sqrt((self.zones["tirer"]["rouge"][0] - self.zones["tirer"]["bleu"][0])**2 + (self.zones["tirer"]["rouge"][1] - self.zones["tirer"]["bleu"][1])**2)/2
 
         val = -4 * x - 2 * y
 
+        rospy.loginfo(f"[DEBUG] Équipe: {equipe}, Position: ({x:.2f}, {y:.2f}), Distance: {distance:.2f}, Rayon: {rayon:.2f}, Val: {val:.2f}")
+
         if distance > rayon:
+            rospy.loginfo("Robot pas dans le cercle de tir")
             return False
 
         if equipe == "bleu" and val > 0:
@@ -136,6 +146,7 @@ class GestionTerrain:
         elif equipe == "rouge" and val < 0:
             return True
 
+        rospy.loginfo("Robot pas dans la zone de tir")
         return False
 
 if __name__ == "__main__":
