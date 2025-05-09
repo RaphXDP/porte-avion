@@ -18,7 +18,6 @@ class Robot:
         self.ball_count = 0
         self.max_balls = 2
         self.climbing = False
-        self.zone = "charge"  # Simulé pour test
         self.keys = keys
         self.confirmation_result = None
         self.successful_climb = False
@@ -90,9 +89,6 @@ class Robot:
         self.cmd_pub.publish(self.cmd)
 
     def load_ball(self):
-        if self.zone != 'charge':
-            rospy.loginfo(f"{self.name} n'est pas dans une zone de charge.")
-            return
         if self.ball_count >= self.max_balls:
             rospy.loginfo(f"{self.name} a déjà 2 ballons.")
             return
