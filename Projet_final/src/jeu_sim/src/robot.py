@@ -106,9 +106,6 @@ class Robot:
             rospy.loginfo(f"{self.name} : échec de chargement.")
 
     def shoot_ball(self):
-        if self.zone != 'tir':
-            rospy.loginfo(f"{self.name} n'est pas dans une zone de tir.")
-            return
         if self.ball_count == 0:
             rospy.loginfo(f"{self.name} n'a pas de ballon à tirer.")
             return
@@ -125,10 +122,6 @@ class Robot:
         if self.successful_climb:
             rospy.loginfo(f"{self.name} a déjà grimpé. Action bloquée.")
             return
-        if self.zone != 'escalade':
-            rospy.loginfo(f"{self.name} n'est pas dans une zone d’escalade.")
-            return
-        self.climbing = True
         self.send_action('escalader')
         rospy.loginfo(f"{self.name} tente l’escalade...")
         rospy.sleep(3)
@@ -137,7 +130,6 @@ class Robot:
             rospy.loginfo(f"{self.name} a réussi l’escalade (+5 points)")
         else:
             rospy.loginfo(f"{self.name} a échoué l’escalade.")
-        self.climbing = False
 
     def send_action(self, action):
         msg = String()
@@ -170,8 +162,8 @@ if __name__ == '__main__':
     robot1_keys = {'move': ['w', 'a', 's', 'd'], 'charge': 'z', 'tir': 'x', 'climb': 'c'}
     robot2_keys = {'move': ['i', 'j', 'k', 'l'], 'charge': 'b', 'tir': 'n', 'climb': 'm'}
 
-    robot1 = Robot("robot_0", "/robot_0/cmd_vel", "rouge", robot1_keys)
-    robot2 = Robot("robot_1", "/robot_1/cmd_vel", "bleu", robot2_keys)
+    robot1 = Robot("robot_0", "/robot_0/cmd_vel", "bleu", robot1_keys)
+    robot2 = Robot("robot_1", "/robot_1/cmd_vel", "rouge", robot2_keys)
 
     rospy.Subscriber("/terrain", String, robot1.update_confirmation)
     rospy.Subscriber("/terrain", String, robot2.update_confirmation)
