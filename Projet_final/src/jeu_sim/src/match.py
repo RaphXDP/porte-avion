@@ -20,23 +20,10 @@ class GestionMatch:
     def mettre_a_jour_score(self, msg):
         try:
             data = json.loads(msg.data)
-<<<<<<< HEAD
             for equipe in ["bleu", "rouge"]:
                 if equipe in data:
                     self.score[equipe]["ballons"] = data[equipe].get("ballons", 0)
                     self.score[equipe]["etages"] = data[equipe].get("etages", 0)
-=======
-            rospy.loginfo(msg)
-            equipe = data.get("equipe")
-            ballons = data.get("ballons", 0)
-            etages = data.get("etages", 0)
-
-            if equipe in self.score:
-                self.score[equipe]["ballons"] += ballons
-                self.score[equipe]["etages"] += etages
-            else:
-                rospy.logwarn("[Match] Équipe inconnue : %s", equipe)
->>>>>>> f6ff19d4bba927f8d8d03cffbff851cc06dfb34c
         except json.JSONDecodeError:
             rospy.logwarn("[Match] Erreur de format JSON dans le message de score.")
 
