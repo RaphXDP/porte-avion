@@ -76,7 +76,7 @@ class GestionTerrain:
             self.positions[equipe]["x"] = x
             self.positions[equipe]["y"] = y
             if(self.zone_tir(self.positions[equipe]["x"], self.positions[equipe]["y"], equipe)):
-                if random.random() < 0.9:
+                if random.random() <= 0.9:
                     self.score[equipe]["ballons"] += 1
                     resultat = "reussite"
                     rospy.loginfo("Tir réussi!")
@@ -94,15 +94,15 @@ class GestionTerrain:
             self.positions[equipe]["y"] = y
             if equipe == "bleu":
                 if self.positions[equipe]["x"] < self.zones[action][equipe][0] and self.positions[equipe]["y"] > self.zones[action][equipe][1] and self.score[equipe]["etages"] < 3:
-                    if random.random() < 0.6:
+                    if random.random() <= 0.6:
                         self.score[equipe]["etages"] += 1
                         resultat = "reussite"
                         rospy.loginfo("Escalade réussie!")
                     else:
                         rospy.loginfo("Échec de l'escalade.")
             if equipe == "rouge":
-                if self.positions[equipe]["x"] > self.zones[action][equipe][0] and self.positions[equipe]["y"] < self.zones[action][equipe][1]and self.score[equipe]["etages"] < 3:
-                    if random.random(1, 10) < 6:
+                if self.positions[equipe]["x"] > self.zones[action][equipe][0] and self.positions[equipe]["y"] < self.zones[action][equipe][1] and self.score[equipe]["etages"] < 3:
+                    if random.random() <= 0.6:
                         self.score[equipe]["etages"] += 1
                         resultat = "reussite"
                         rospy.loginfo("Escalade réussie!")

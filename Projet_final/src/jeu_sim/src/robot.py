@@ -45,6 +45,7 @@ class Robot:
 
     def handle_key(self, key):
         if self.climbing:
+            self.stop()
             if key == self.keys['climb']:
                 self.climb()
             else:
@@ -52,6 +53,7 @@ class Robot:
             return
         
         elif self.loading:
+            self.stop()
             rospy.loginfo(f"{self.name} rechargement : bloqué.")
             return
 
@@ -65,10 +67,16 @@ class Robot:
                 self.current_key = key
                 rospy.loginfo(f"{self.name} : mouvement actif -> {key}")
         elif key == self.keys['charge']:
+            self.stop()
+            self.current_key = key
             self.load_ball()
         elif key == self.keys['tir']:
+            self.stop()
+            self.current_key = key
             self.shoot_ball()
         elif key == self.keys['climb']:
+            self.stop()
+            self.current_key = key
             self.climb()
 
     def movement_loop(self):
@@ -110,8 +118,8 @@ class Robot:
         while not self.newresult:
            rospy.loginfo(f"{self.newresult}")
            rospy.sleep(0.1)
-        for _ in progressbar(range(1), redirect_stdout=True):
-                rospy.sleep(1)
+        for _ in progressbar(range(10), redirect_stdout=True):
+                rospy.sleep(0.1)
         self.loading = False
         if self.confirmation_result == 'reussite':
             self.ball_count += 1
@@ -142,8 +150,8 @@ class Robot:
         rospy.loginfo(f"{self.name} tente l’escalade...")
         while not self.newresult:
             rospy.sleep(0.1)
-        for _ in progressbar(range(3), redirect_stdout=True):
-                rospy.sleep(1)
+        for _ in progressbar(range(10), redirect_stdout=True):
+                rospy.sleep(0.3)
         if self.confirmation_result == 'reussite':
             self.climbing = True
             rospy.loginfo(f"{self.name} a réussi l’escalade (+5 points)")
