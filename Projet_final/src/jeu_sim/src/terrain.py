@@ -93,7 +93,7 @@ class GestionTerrain:
             self.positions[equipe]["x"] = x
             self.positions[equipe]["y"] = y
             if equipe == "bleu":
-                if self.positions[equipe]["x"] < self.zones[action][equipe][0] and self.positions[equipe]["y"] > self.zones[action][equipe][1]:
+                if self.positions[equipe]["x"] < self.zones[action][equipe][0] and self.positions[equipe]["y"] > self.zones[action][equipe][1] and self.score[equipe]["etages"] < 3:
                     if random.random() < 0.6:
                         self.score[equipe]["etages"] += 1
                         resultat = "reussite"
@@ -101,7 +101,7 @@ class GestionTerrain:
                     else:
                         rospy.loginfo("Échec de l'escalade.")
             if equipe == "rouge":
-                if self.positions[equipe]["x"] > self.zones[action][equipe][0] and self.positions[equipe]["y"] < self.zones[action][equipe][1]:
+                if self.positions[equipe]["x"] > self.zones[action][equipe][0] and self.positions[equipe]["y"] < self.zones[action][equipe][1]and self.score[equipe]["etages"] < 3:
                     if random.random(1, 10) < 6:
                         self.score[equipe]["etages"] += 1
                         resultat = "reussite"

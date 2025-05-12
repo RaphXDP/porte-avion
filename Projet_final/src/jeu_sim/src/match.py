@@ -12,23 +12,18 @@ class GestionMatch:
         }
         self.etat = "En attente"
 
-        rospy.Subscriber("match", String, self.ajouter_score)
+        rospy.Subscriber("match", String, self.mettre_a_jour_score)
         rospy.Timer(rospy.Duration(1), self.affichage_score)
 
-        rospy.loginfo("[Match] Nœud gestion_match actif. Comptabilisation des scores...")
+        rospy.loginfo("[Match] Nœud gestion_match actif. Mise à jour directe des scores...")
 
-    def ajouter_score(self, msg):
+    def mettre_a_jour_score(self, msg):
         try:
             data = json.loads(msg.data)
-            equipe = data.get("equipe")
-            ballons = data.get("ballons", 0)
-            etages = data.get("etages", 0)
-
-            if equipe in self.score:
-                self.score[equipe]["ballons"] += ballons
-                self.score[equipe]["etages"] += etages
-            else:
-                rospy.logwarn("[Match] Équipe inconnue : %s", equipe)
+            for equipe in ["bleu", "rouge"]:
+                if equipe in data:
+                    self.score[equipe]["ballons"] = data[equipe].get("ballons", 0)
+                    self.score[equipe]["etages"] = data[equipe].get("etages", 0)
         except json.JSONDecodeError:
             rospy.logwarn("[Match] Erreur de format JSON dans le message de score.")
 
