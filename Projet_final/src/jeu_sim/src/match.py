@@ -20,6 +20,7 @@ class GestionMatch:
     def ajouter_score(self, msg):
         try:
             data = json.loads(msg.data)
+            rospy.loginfo(msg)
             equipe = data.get("equipe")
             ballons = data.get("ballons", 0)
             etages = data.get("etages", 0)
