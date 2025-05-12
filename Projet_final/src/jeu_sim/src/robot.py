@@ -8,6 +8,7 @@ import threading
 import json
 from geometry_msgs.msg import Twist
 from std_msgs.msg import String, Bool
+from progressbar import progressbar
 
 class Robot:
     def __init__(self, name, cmd_topic, team_color, keys):
@@ -18,6 +19,7 @@ class Robot:
         self.ball_count = 0
         self.max_balls = 2
         self.climbing = False
+        self.loading = False
         self.keys = keys
         self.confirmation_result = None
         self.successful_climb = False
@@ -48,6 +50,11 @@ class Robot:
             else:
                 rospy.loginfo(f"{self.name} escalade : bloqué.")
             return
+        
+        elif self.loading:
+            rospy.loginfo(f"{self.name} rechargement : bloqué.")
+            return
+
 
         elif key in self.keys['move']:
             if self.current_key == key:
@@ -98,10 +105,14 @@ class Robot:
             return
         self.newresult = False
         self.send_action('charger')
+        self.loading = True
         rospy.loginfo(f"{self.name} attend un ballon...")
         while not self.newresult:
            rospy.loginfo(f"{self.newresult}")
-           rospy.sleep(1)
+           rospy.sleep(0.1)
+        for _ in progressbar(range(1), redirect_stdout=True):
+                rospy.sleep(1)
+        self.loading = False
         if self.confirmation_result == 'reussite':
             self.ball_count += 1
             rospy.loginfo(f"{self.name} a maintenant {self.ball_count} ballons.")
@@ -118,7 +129,6 @@ class Robot:
         rospy.loginfo(f"{self.name} tente un tir...")
         while not self.newresult:
             rospy.sleep(0.1)
-        rospy.sleep(1)
         if self.confirmation_result == 'reussite':
             self.ball_count -= 1
             rospy.loginfo(f"{self.name} a marqué 2 points. Ballons restants : {self.ball_count}")
@@ -132,7 +142,8 @@ class Robot:
         rospy.loginfo(f"{self.name} tente l’escalade...")
         while not self.newresult:
             rospy.sleep(0.1)
-        rospy.sleep(3)
+        for _ in progressbar(range(3), redirect_stdout=True):
+                rospy.sleep(1)
         if self.confirmation_result == 'reussite':
             self.climbing = True
             rospy.loginfo(f"{self.name} a réussi l’escalade (+5 points)")
