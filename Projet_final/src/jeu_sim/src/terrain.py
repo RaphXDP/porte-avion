@@ -127,7 +127,7 @@ class GestionTerrain:
             msg = rospy.wait_for_message(topic, Odometry, timeout=1.0)
             x = msg.pose.pose.position.x
             y = msg.pose.pose.position.y
-            rospy.loginfo(f"[DEBUG] Position {equipe} obtenue : x={x:.2f}, y={y:.2f}")
+            #rospy.loginfo(f"[DEBUG] Position {equipe} obtenue : x={x:.2f}, y={y:.2f}")
             return (x, y)
         except rospy.ROSException:
             rospy.logwarn(f"Position non disponible pour l’équipe {equipe}.")
@@ -139,7 +139,7 @@ class GestionTerrain:
 
         val = -4 * x - 2 * y
 
-        rospy.loginfo(f"[DEBUG] Équipe: {equipe}, Position: ({x:.2f}, {y:.2f}), Distance: {distance:.2f}, Rayon: {rayon:.2f}, Val: {val:.2f}")
+        #rospy.loginfo(f"[DEBUG] Équipe: {equipe}, Position: ({x:.2f}, {y:.2f}), Distance: {distance:.2f}, Rayon: {rayon:.2f}, Val: {val:.2f}")
 
         if distance > rayon:
             rospy.loginfo("Robot pas dans le cercle de tir")

@@ -116,7 +116,7 @@ class Robot:
         self.loading = True
         rospy.loginfo(f"{self.name} attend un ballon...")
         while not self.newresult:
-           rospy.loginfo(f"{self.newresult}")
+           #rospy.loginfo(f"{self.newresult}")
            rospy.sleep(0.1)
         for _ in progressbar(range(10), redirect_stdout=True):
                 rospy.sleep(0.1)
@@ -142,7 +142,7 @@ class Robot:
             rospy.loginfo(f"{self.name} a marqué 2 points. Ballons restants : {self.ball_count}")
         else:
             self.ball_count -= 1
-            rospy.loginfo(f"{self.name} : tir échoué.")
+            rospy.loginfo(f"{self.name} : tir échoué. Ballons restants : {self.ball_count}")
 
     def climb(self):
         
@@ -171,7 +171,7 @@ class Robot:
             if data.get("equipe") == self.team_color and data.get("action") in ["tirer", "charger", "escalader"]:
                 self.confirmation_result = data.get("resultat")
                 self.newresult = True
-                rospy.loginfo(f"{self.newresult} callback")
+                #rospy.loginfo(f"{self.newresult} callback")
         except Exception as e:
             rospy.logwarn(f"{self.name} a reçu une donnée non valide : {e}")
 
