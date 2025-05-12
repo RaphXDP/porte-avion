@@ -6,6 +6,8 @@ import time
 import math
 from std_msgs.msg import String
 from nav_msgs.msg import Odometry
+from progressbar import progressbar
+
 
 class GestionTerrain:
     def __init__(self):
@@ -76,6 +78,8 @@ class GestionTerrain:
             self.positions[equipe]["x"] = x
             self.positions[equipe]["y"] = y
             if(self.zone_tir(self.positions[equipe]["x"], self.positions[equipe]["y"], equipe)):
+                for _ in progressbar(range(10), redirect_stdout=True):
+                    rospy.sleep(0.1)
                 if random.random() <= 0.9:
                     self.score[equipe]["ballons"] += 1
                     resultat = "reussite"

@@ -141,6 +141,7 @@ class Robot:
             self.ball_count -= 1
             rospy.loginfo(f"{self.name} a marqué 2 points. Ballons restants : {self.ball_count}")
         else:
+            self.ball_count -= 1
             rospy.loginfo(f"{self.name} : tir échoué.")
 
     def climb(self):
